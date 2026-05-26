@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>매쓰홀릭T 계정 신청 · 다정초등학교</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; letter-spacing: -0.01em; color: #111827; background: #f3f4f6; -webkit-tap-highlight-color: transparent; }
+  body { min-height: 100vh; }
+
+  .page { max-width: 560px; margin: 0 auto; padding: 24px 16px 48px; }
+  .h1 { font-size: 24px; font-weight: 700; color: #111827; line-height: 1.3; }
+  .sub { font-size: 14px; color: #6b7280; margin-top: 4px; }
+  .h2 { font-size: 16px; font-weight: 600; color: #111827; }
+
+  .card { background: #fff; border: 1px solid #e5e7eb; border-radius: 16px; padding: 24px; margin-top: 16px; }
+
+  .field { margin-bottom: 18px; }
+  .field:last-child { margin-bottom: 0; }
+  .label { display: block; font-size: 14px; font-weight: 500; color: #111827; margin-bottom: 8px; }
+  .req { color: #dc2626; margin-left: 2px; }
+  .hint { font-size: 12px; color: #6b7280; margin-top: 6px; }
+  .err { font-size: 13px; color: #dc2626; margin-top: 6px; }
+
+  input[type="text"], input[type="tel"], input[type="email"] {
+    width: 100%; font-family: inherit; font-size: 16px; color: #111827;
+    padding: 12px 14px; border: 1px solid #e5e7eb; border-radius: 12px;
+    background: #fff; outline: none; transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  input:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.15); }
+  input.invalid { border-color: #dc2626; }
+
+  .consent { background: #f9fafb; border-radius: 12px; padding: 14px 16px; font-size: 13px; color: #4b5563; line-height: 1.7; margin-top: 12px; }
+  .consent ul { list-style: none; margin-top: 6px; }
+  .check { display: flex; align-items: flex-start; gap: 10px; margin-top: 14px; cursor: pointer; user-select: none; }
+  .check input { width: 20px; height: 20px; accent-color: #2563eb; margin-top: 1px; flex-shrink: 0; }
+  .check span { font-size: 15px; color: #111827; line-height: 1.5; }
+
+  .sig-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .sig-clear { font-size: 13px; color: #4b5563; background: #f3f4f6; border: none; padding: 7px 12px; border-radius: 8px; cursor: pointer; font-family: inherit; }
+  .sig-clear:hover { background: #e5e7eb; }
+  canvas#sig { display: block; width: 100%; height: 180px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; touch-action: none; cursor: crosshair; }
+
+  .btn-primary { display: block; width: 100%; padding: 16px; background: #2563eb; color: #fff; font-family: inherit; font-size: 16px; font-weight: 600; border: none; border-radius: 16px; cursor: pointer; transition: background 0.15s; margin-top: 20px; }
+  .btn-primary:hover { background: #1d4ed8; }
+  .btn-primary:active { transform: scale(0.99); }
+  .btn-primary:disabled { background: #d1d5db; cursor: not-allowed; }
+  .btn-secondary { display: inline-block; width: 100%; padding: 14px; background: #f3f4f6; color: #111827; font-family: inherit; font-size: 15px; font-weight: 500; border: none; border-radius: 12px; cursor: pointer; }
+  .btn-secondary:hover { background: #e5e7eb; }
+
+  .done-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 16px; }
+  .done-card { width: 100%; max-width: 420px; background: #fff; border: 1px solid #e5e7eb; border-radius: 20px; padding: 36px 28px; text-align: center; }
+  .done-icon { width: 56px; height: 56px; margin: 0 auto 16px; background: #dbeafe; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+  .done-icon svg { width: 28px; height: 28px; color: #2563eb; }
+  .done-info { background: #f9fafb; border-radius: 12px; padding: 14px 18px; margin: 18px 0; font-size: 14px; color: #374151; text-align: left; }
+  .done-info div { padding: 3px 0; }
+  .done-info .muted { color: #6b7280; display: inline-block; min-width: 60px; }
+
+  .hidden { display: none !important; }
+
+  .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid #fff; border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite; vertical-align: middle; margin-right: 8px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  @media (max-width: 480px) {
+    .page { padding: 16px 12px 32px; }
+    .card { padding: 20px; }
+    .h1 { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+
+<script>
+// Apps Script 웹 앱 URL · 다정초등학교 매쓰홀릭T 백엔드
+const ENDPOINT_URL = "https://script.google.com/macros/s/AKfycby5mHGEToo4ex7WN7t97c-TBoThec12a6rjOEfSbRvsPnnLv1GzM8ENwfoYR8-S_hy2/exec";
+</script>
+
+<div class="page" id="page-form">
+  <header>
+    <h1 class="h1">매쓰홀릭T 계정 신청</h1>
+    <p class="sub">다정초등학교 · 선생님 정보를 입력해 주세요</p>
+  </header>
+
+  <div class="card">
+    <div class="field">
+      <label class="label" for="f-name">이름<span class="req">*</span></label>
+      <input type="text" id="f-name" placeholder="홍길동" autocomplete="name">
+      <div class="err hidden" id="e-name"></div>
+    </div>
+
+    <div class="field">
+      <label class="label" for="f-id">희망 ID<span class="req">*</span></label>
+      <input type="text" id="f-id" placeholder="hong123" autocapitalize="none" autocomplete="off">
+      <div class="hint">영문, 숫자만 사용 · 초기 비밀번호는 123456으로 설정됩니다</div>
+      <div class="err hidden" id="e-id"></div>
+    </div>
+
+    <div class="field">
+      <label class="label" for="f-phone">휴대폰 번호<span class="req">*</span></label>
+      <input type="tel" id="f-phone" placeholder="010-0000-0000" inputmode="numeric" autocomplete="tel">
+      <div class="err hidden" id="e-phone"></div>
+    </div>
+
+    <div class="field">
+      <label class="label" for="f-email">이메일<span class="req">*</span></label>
+      <input type="email" id="f-email" placeholder="name@edu.sje.go.kr" autocapitalize="none" autocomplete="email">
+      <div class="err hidden" id="e-email"></div>
+    </div>
+
+    <div class="field">
+      <label class="label" for="f-class">담당 학급</label>
+      <input type="text" id="f-class" placeholder="4-2, 전담, 영양 등">
+      <div class="hint">담임이 아니면 담당 업무를 적어 주세요</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 class="h2">개인정보 수집·이용 동의</h2>
+    <div class="consent">
+      매쓰홀릭T는 선생님 계정 생성, 공지사항 안내 등을 위하여 아래와 같이 개인정보를 수집·이용합니다.
+      <ul>
+        <li>· 수집 목적: 회원 식별 및 서비스 제공</li>
+        <li>· 수집 항목: 이름, 휴대폰 번호, 이메일</li>
+        <li>· 보유·이용 기간: 서비스 이용 종료 시</li>
+      </ul>
+    </div>
+    <label class="check">
+      <input type="checkbox" id="f-agree">
+      <span>위 내용에 동의합니다.</span>
+    </label>
+    <div class="err hidden" id="e-agree"></div>
+  </div>
+
+  <div class="card">
+    <div class="sig-head">
+      <div>
+        <h2 class="h2">서명<span class="req">*</span></h2>
+        <div class="hint" style="margin-top: 2px;">아래 칸에 손가락 또는 마우스로 서명해 주세요</div>
+      </div>
+      <button type="button" class="sig-clear" id="sig-clear">지우기</button>
+    </div>
+    <canvas id="sig"></canvas>
+    <div class="err hidden" id="e-sig"></div>
+  </div>
+
+  <button type="button" class="btn-primary" id="submit-btn">제출하기</button>
+
+  <p style="font-size: 12px; color: #9ca3af; text-align: center; margin-top: 16px;">
+    제출 후 수정이 필요하면 다시 작성해 주세요.
+  </p>
+</div>
+
+<div class="done-wrap hidden" id="page-done">
+  <div class="done-card">
+    <div class="done-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+    </div>
+    <h1 class="h1">제출되었습니다</h1>
+    <p class="sub" id="done-greet">선생님의 정보가 정상적으로 접수되었습니다.</p>
+    <div class="done-info" id="done-info"></div>
+    <button class="btn-secondary" id="another-btn">다른 선생님 계속 입력</button>
+  </div>
+</div>
+
+<script>
+"use strict";
+
+let sigCtx = null, sigCanvas = null, drawing = false, lastPos = null, hasDrawn = false;
+function initSignature() {
+  sigCanvas = document.getElementById("sig");
+  const rect = sigCanvas.getBoundingClientRect();
+  const dpr = window.devicePixelRatio || 1;
+  sigCanvas.width = rect.width * dpr;
+  sigCanvas.height = rect.height * dpr;
+  sigCtx = sigCanvas.getContext("2d");
+  sigCtx.scale(dpr, dpr);
+  sigCtx.lineWidth = 2.5;
+  sigCtx.lineCap = "round";
+  sigCtx.lineJoin = "round";
+  sigCtx.strokeStyle = "#111827";
+  hasDrawn = false;
+
+  sigCanvas.onmousedown = startDraw;
+  sigCanvas.onmousemove = doDraw;
+  sigCanvas.onmouseup = endDraw;
+  sigCanvas.onmouseleave = endDraw;
+  sigCanvas.ontouchstart = startDraw;
+  sigCanvas.ontouchmove = doDraw;
+  sigCanvas.ontouchend = endDraw;
+}
+function getPos(e) {
+  const rect = sigCanvas.getBoundingClientRect();
+  if (e.touches && e.touches[0]) {
+    return { x: e.touches[0].clientX - rect.left, y: e.touches[0].clientY - rect.top };
+  }
+  return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+}
+function startDraw(e) { e.preventDefault(); drawing = true; lastPos = getPos(e); }
+function doDraw(e) {
+  if (!drawing) return;
+  e.preventDefault();
+  const p = getPos(e);
+  sigCtx.beginPath();
+  sigCtx.moveTo(lastPos.x, lastPos.y);
+  sigCtx.lineTo(p.x, p.y);
+  sigCtx.stroke();
+  lastPos = p;
+  hasDrawn = true;
+}
+function endDraw() { drawing = false; }
+document.getElementById("sig-clear").onclick = () => {
+  if (!sigCtx) return;
+  sigCtx.clearRect(0, 0, sigCanvas.width, sigCanvas.height);
+  hasDrawn = false;
+};
+function trimSignaturePNG() {
+  if (!hasDrawn) return null;
+  const w = sigCanvas.width, h = sigCanvas.height;
+  const img = sigCtx.getImageData(0, 0, w, h);
+  const d = img.data;
+  let minX = w, minY = h, maxX = 0, maxY = 0, any = false;
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      if (d[(y * w + x) * 4 + 3] > 0) {
+        any = true;
+        if (x < minX) minX = x;
+        if (x > maxX) maxX = x;
+        if (y < minY) minY = y;
+        if (y > maxY) maxY = y;
+      }
+    }
+  }
+  if (!any) return null;
+  const pad = 12;
+  minX = Math.max(0, minX - pad);
+  minY = Math.max(0, minY - pad);
+  maxX = Math.min(w, maxX + pad);
+  maxY = Math.min(h, maxY + pad);
+  const cw = maxX - minX, ch = maxY - minY;
+  const out = document.createElement("canvas");
+  out.width = cw; out.height = ch;
+  out.getContext("2d").drawImage(sigCanvas, minX, minY, cw, ch, 0, 0, cw, ch);
+  return out.toDataURL("image/png");
+}
+
+const phoneInput = document.getElementById("f-phone");
+phoneInput.addEventListener("input", (e) => {
+  const digits = e.target.value.replace(/\D/g, "").slice(0, 11);
+  if (digits.length <= 3) e.target.value = digits;
+  else if (digits.length <= 7) e.target.value = digits.slice(0,3) + "-" + digits.slice(3);
+  else e.target.value = digits.slice(0,3) + "-" + digits.slice(3,7) + "-" + digits.slice(7);
+});
+function showErr(id, msg) {
+  const el = document.getElementById("e-" + id);
+  const input = document.getElementById("f-" + id);
+  if (msg) {
+    el.textContent = msg; el.classList.remove("hidden");
+    if (input) input.classList.add("invalid");
+  } else {
+    el.classList.add("hidden");
+    if (input) input.classList.remove("invalid");
+  }
+}
+function val(id) { return document.getElementById("f-" + id).value.trim(); }
+
+function validate() {
+  let ok = true;
+  ["name","id","phone","email","agree","sig"].forEach(k => showErr(k, ""));
+  if (!val("name")) { showErr("name", "이름을 입력해 주세요."); ok = false; }
+  if (!val("id")) { showErr("id", "희망 ID를 입력해 주세요."); ok = false; }
+  else if (!/^[a-zA-Z0-9_.\-]+$/.test(val("id"))) { showErr("id", "영문, 숫자만 사용해 주세요."); ok = false; }
+  if (!val("phone")) { showErr("phone", "휴대폰 번호를 입력해 주세요."); ok = false; }
+  else if (!/^010-?\d{4}-?\d{4}$/.test(val("phone"))) { showErr("phone", "010-0000-0000 형식으로 입력해 주세요."); ok = false; }
+  if (!val("email")) { showErr("email", "이메일을 입력해 주세요."); ok = false; }
+  else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val("email"))) { showErr("email", "이메일 형식이 올바르지 않습니다."); ok = false; }
+  if (!document.getElementById("f-agree").checked) { showErr("agree", "개인정보 수집·이용 동의가 필요합니다."); ok = false; }
+  if (!hasDrawn) { showErr("sig", "서명을 해 주세요."); ok = false; }
+  return ok;
+}
+
+const submitBtn = document.getElementById("submit-btn");
+submitBtn.onclick = async () => {
+  if (!validate()) {
+    const firstErr = document.querySelector(".err:not(.hidden)");
+    if (firstErr) firstErr.scrollIntoView({ behavior: "smooth", block: "center" });
+    return;
+  }
+
+  const payload = {
+    name: val("name"),
+    desiredId: val("id"),
+    phone: val("phone"),
+    email: val("email"),
+    classInCharge: val("class"),
+    agreed: true,
+    signature: trimSignaturePNG()
+  };
+
+  submitBtn.disabled = true;
+  submitBtn.innerHTML = '<span class="spinner"></span>제출 중...';
+
+  try {
+    const res = await fetch(ENDPOINT_URL, {
+      method: "POST",
+      mode: "cors",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(payload),
+      redirect: "follow"
+    });
+    const json = await res.json();
+    if (!json.ok) throw new Error(json.error || "전송 실패");
+
+    document.getElementById("done-greet").textContent =
+      `${payload.name} 선생님의 정보가 정상적으로 접수되었습니다.`;
+    document.getElementById("done-info").innerHTML = `
+      <div><span class="muted">희망 ID</span> ${escapeHtml(payload.desiredId)}</div>
+      <div><span class="muted">담당 학급</span> ${escapeHtml(payload.classInCharge || "-")}</div>
+    `;
+    document.getElementById("page-form").classList.add("hidden");
+    document.getElementById("page-done").classList.remove("hidden");
+    window.scrollTo(0, 0);
+  } catch (err) {
+    alert("제출에 실패했습니다.\n네트워크 연결을 확인하고 다시 시도해 주세요.\n\n" + err.message);
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = "제출하기";
+  }
+};
+
+document.getElementById("another-btn").onclick = () => {
+  ["name","id","phone","email","class"].forEach(k => document.getElementById("f-" + k).value = "");
+  document.getElementById("f-agree").checked = false;
+  if (sigCtx) sigCtx.clearRect(0, 0, sigCanvas.width, sigCanvas.height);
+  hasDrawn = false;
+  ["name","id","phone","email","agree","sig"].forEach(k => showErr(k, ""));
+  document.getElementById("page-done").classList.add("hidden");
+  document.getElementById("page-form").classList.remove("hidden");
+  window.scrollTo(0, 0);
+};
+
+function escapeHtml(s) {
+  return String(s || "").replace(/[&<>"']/g, c => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  }[c]));
+}
+
+initSignature();
+</script>
+</body>
+</html>
